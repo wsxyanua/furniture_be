@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 
 
 class FilterResponse(BaseModel):
@@ -10,7 +10,7 @@ class FilterResponse(BaseModel):
     material: Optional[List[str]] = None
     feature: Optional[List[str]] = None
     popular_search: Optional[List[str]] = None
-    price_range: Optional[Dict[str, any]] = None
+    price_range: Optional[Dict[str, Any]] = None
     series: Optional[List[str]] = None
     sort_by: Optional[List[str]] = None
 

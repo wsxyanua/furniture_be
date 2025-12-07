@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Enum, JSON
+from sqlalchemy import Column, String, Enum, JSON, ForeignKey
 from sqlalchemy.orm import relationship
 from ..database import Base
 import enum
@@ -25,7 +25,7 @@ class CategoryItem(Base):
     __tablename__ = "category_items"
 
     id = Column(String(50), primary_key=True, index=True)
-    category_id = Column(String(50), nullable=False)
+    category_id = Column(String(50), ForeignKey("categories.id"), nullable=False)
     name = Column(String(100), nullable=False)
     img = Column(String(500), nullable=True)
     status = Column(Enum(CategoryStatus), default=CategoryStatus.active)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 
 
@@ -19,7 +19,7 @@ class ReviewSchema(BaseModel):
     star: float
     message: Optional[str] = None
     img: Optional[List[str]] = None
-    service: Optional[Dict[str, any]] = None
+    service: Optional[Dict[str, Any]] = None
     timestamp: datetime
 
     class Config:
@@ -67,11 +67,11 @@ class ReviewCreate(BaseModel):
     star: float
     message: Optional[str] = None
     img: Optional[List[str]] = None
-    service: Optional[Dict[str, any]] = None
+    service: Optional[Dict[str, Any]] = None
 
 
 class ReviewUpdate(BaseModel):
     star: Optional[float] = None
     message: Optional[str] = None
     img: Optional[List[str]] = None
-    service: Optional[Dict[str, any]] = None
+    service: Optional[Dict[str, Any]] = None

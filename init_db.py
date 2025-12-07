@@ -14,7 +14,10 @@ from app.models.order import Order, OrderItem
 from app.models.review import Review
 from app.models.country import Country
 from app.models.filter import Filter
+from app.models.supplier import Supplier
+from app.models.inventory import Inventory, InventoryTransaction
 from app.utils.security import get_password_hash
+from app.utils.helpers import generate_id
 from datetime import datetime
 
 
@@ -186,6 +189,52 @@ def init_database():
             sort_by=["Price: Low to High", "Price: High to Low", "Name", "Newest", "Best Review"]
         )
         db.add(default_filter)
+        
+        # Create suppliers
+        print("Creating suppliers...")
+        supplier1 = Supplier(
+            id="SUP_001",
+            name="Công ty Gỗ Việt Nam",
+            email="contact@goviet.com",
+            phone="0901234567",
+            address="123 Đường Gỗ, Quận 1",
+            contact_person="Nguyễn Văn A",
+            tax_code="0123456789",
+            bank_account="1234567890",
+            bank_name="Vietcombank",
+            note="Nhà cung cấp gỗ chất lượng cao"
+        )
+        
+        supplier2 = Supplier(
+            id="SUP_002",
+            name="Công ty Nội Thất Xanh",
+            email="info@noithatxanh.com",
+            phone="0907654321",
+            address="456 Đường Nội Thất, Quận 2",
+            contact_person="Trần Thị B",
+            tax_code="0987654321",
+            bank_account="9876543210",
+            bank_name="Techcombank",
+            note="Chuyên cung cấp phụ kiện nội thất"
+        )
+        
+        db.add_all([supplier1, supplier2])
+        db.flush()
+        
+        # Create inventory for products
+        print("Creating inventory...")
+        products = db.query(Product).all()
+        for product in products:
+            inventory = Inventory(
+                id=generate_id("INV"),
+                product_id=product.id,
+                quantity_on_hand=100,
+                quantity_reserved=0,
+                reorder_level=20,
+                reorder_quantity=50,
+                last_restock_date=datetime.utcnow()
+            )
+            db.add(inventory)
         
         db.commit()
         print("Initial data seeded successfully!")

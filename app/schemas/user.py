@@ -16,7 +16,7 @@ class UserBase(BaseModel):
 class UserCreate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
-    password: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=8)
     full_name: Optional[str] = None
     role: str = "user"
 
