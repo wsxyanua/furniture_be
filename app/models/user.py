@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, DateTime, Enum
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone  # ✅ Thêm timezone
 from ..database import Base
 import enum
 
@@ -28,7 +28,7 @@ class User(Base):
     img = Column(String(500), nullable=True)
     birth_date = Column(String(50), nullable=True)
     gender = Column(String(20), nullable=True)
-    date_enter = Column(DateTime, default=datetime.utcnow)
+    date_enter = Column(DateTime, default=lambda: datetime.now(timezone.utc))  # ✅ Fix
     status = Column(Enum(UserStatus), default=UserStatus.active)
     role = Column(Enum(UserRole), default=UserRole.user)
 

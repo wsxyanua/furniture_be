@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Text, Float, DateTime, ForeignKey, JSON, Enum
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from ..database import Base
 import enum
 
@@ -21,18 +21,20 @@ class Product(Base):
     description = Column(Text, nullable=True)
     status = Column(Enum(ProductStatus), default=ProductStatus.active)
     category_id = Column(String(50), ForeignKey("category_items.id"), nullable=True)
-    material = Column(JSON, nullable=True)  # {"type": "Wood", "quality": "Premium"}
-    size = Column(JSON, nullable=True)  # {"width": "100cm", "height": "50cm"}
+    material = Column(JSON, nullable=True)
+    size = Column(JSON, nullable=True)
     root_price = Column(Float, default=0)
     current_price = Column(Float, default=0)
     review_avg = Column(Float, default=0)
     sell_count = Column(Float, default=0)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     category_item = relationship("CategoryItem", back_populates="products")
     product_items = relationship("ProductItem", back_populates="product", cascade="all, delete-orphan")
-    reviews = relationship("Review", back_populates="product", cascade="all, delete-orphan")
+    
+    # ✅ QUAN TRỌNG: Thêm lazy="noload" để KHÔNG tự động load reviews
+    reviews = relationship("Review", back_populates="product", lazy="noload")
 
 
 class ProductItem(Base):
@@ -40,8 +42,8 @@ class ProductItem(Base):
 
     id = Column(String(50), primary_key=True, index=True)
     product_id = Column(String(50), ForeignKey("products.id"), nullable=False)
-    color = Column(JSON, nullable=True)  # {"name": "Red", "code": "#FF0000"}
-    img = Column(JSON, nullable=True)  # ["img1.jpg", "img2.jpg"]
+    color = Column(JSON, nullable=True)
+    img = Column(JSON, nullable=True)
 
     # Relationships
     product = relationship("Product", back_populates="product_items")
