@@ -18,4 +18,4 @@ class Banner(Base):
     date_end = Column(String(50), nullable=True)
     img = Column(String(500), nullable=False)
     status = Column(Enum(BannerStatus), default=BannerStatus.active)
-    products = Column(JSON, nullable=True)  # ["product_id1", "product_id2"]
+    product = Column(JSON, nullable=True)  # ["product_id1", "product_id2"] - Match database column name

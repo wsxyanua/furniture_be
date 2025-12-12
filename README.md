@@ -83,8 +83,8 @@ Script này sẽ:
 - Tạo 2 tài khoản test
 
 **Tài khoản test:**
-- Admin: `admin@furniture.com` / `admin123`
-- User: `user@test.com` / `user123`
+- Admin: `admin@furniture.com` / `admin12
+- User: `user@test.com` / `user123`3`
 
 ### 6. Chạy server
 

@@ -1,38 +1,46 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
+from typing import Optional
 from ..database import get_db
 from ..models.user import User
 from ..utils.security import decode_access_token
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)  # ← Don't throw error if no token
 
 
 def get_current_user(
-    credentials = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db)
-) -> User:
+) -> Optional[User]:
+    # If no credentials provided, return None (anonymous user)
+    if credentials is None:
+        return None
+    
     token = credentials.credentials
     payload = decode_access_token(token)
     
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials"
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},  # ← Best practice
         )
     
     user_id: str = payload.get("sub")
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials"
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.id == user_id).first()  # ✅ Fixed: Use User.id
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
     return user

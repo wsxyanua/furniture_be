@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from ..database import get_db
 from ..schemas.favorite import FavoriteCreate, FavoriteResponse
 from ..models.favorite import Favorite
@@ -12,9 +12,13 @@ router = APIRouter(prefix="/favorites", tags=["Favorites"])
 
 @router.get("", response_model=List[FavoriteResponse])
 def get_favorites(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user)
 ):
+    # If no user logged in, return empty favorites
+    if not current_user:
+        return []
+    
     favorites = db.query(Favorite).filter(
         Favorite.user_id == current_user.id
     ).all()
